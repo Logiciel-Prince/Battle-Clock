@@ -44,22 +44,24 @@ const Home: React.FC<HomeProps> = ({ gameFilter }) => {
 
   if (loading) {
     return (
-      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-32 flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="relative mb-12">
-          <div className="w-24 h-24 border-t-4 border-rose-600 border-solid rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Zap className="w-8 h-8 text-rose-500 animate-pulse" />
-          </div>
-        </div>
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-black font-rajdhani text-slate-900 dark:text-white uppercase tracking-[0.3em] animate-pulse">Scanning Frequencies</h2>
-          <div className="flex flex-col gap-2 font-mono-tech text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-            <span>> ESTABLISHING SECURE CONNECTION...</span>
-            <span>> DECRYPTING SATELLITE INTEL...</span>
-            <span>> SYNCING BATTLE CLOCKS...</span>
-          </div>
-        </div>
-      </main>
+        <main className="max-w-7xl mx-auto px-6 lg:px-12 py-32 flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="relative mb-12">
+                <div className="w-24 h-24 border-t-4 border-rose-600 border-solid rounded-full animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <Zap className="w-8 h-8 text-rose-500 animate-pulse" />
+                </div>
+            </div>
+            <div className="text-center space-y-4">
+                <h2 className="text-3xl font-black font-rajdhani text-slate-900 dark:text-white uppercase tracking-[0.3em] animate-pulse">
+                    Scanning Frequencies
+                </h2>
+                <div className="flex flex-col gap-2 font-mono-tech text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                    <span>{">"} ESTABLISHING SECURE CONNECTION...</span>
+                    <span>{">"} DECRYPTING SATELLITE INTEL...</span>
+                    <span>{">"} SYNCING BATTLE CLOCKS...</span>
+                </div>
+            </div>
+        </main>
     );
   }
 

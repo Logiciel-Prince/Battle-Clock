@@ -114,7 +114,7 @@ const About: React.FC = () => {
                 </div>
               ) : (
                 <p className="animate-in fade-in duration-1000">
-                  <span className="text-rose-500 mr-2">></span>
+                  <span className="text-rose-500 mr-2">{'>'}</span>
                   {briefing}
                 </p>
               )}
