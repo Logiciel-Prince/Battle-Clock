@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BattleClock - Tactical Match Sync</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --accent: #f43f5e;
+        --accent-glow: rgba(244, 63, 94, 0.4);
+        --bg-primary: #f8fafc;
+        --text-primary: #0f172a;
+        --card-bg: rgba(255, 255, 255, 0.8);
+        --grid-color: rgba(244, 63, 94, 0.1);
+      }
+      
+      .dark {
+        --bg-primary: #02040a;
+        --text-primary: #ffffff;
+        --card-bg: rgba(10, 12, 22, 0.7);
+        --grid-color: rgba(244, 63, 94, 0.07);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      .font-mono-tech {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Scanning Line Effect */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                    linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+        background-size: 100% 4px, 3px 100%;
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.15;
+      }
+
+      /* Tactical Background */
+      .bg-grid {
+        background-image: radial-gradient(circle at 2px 2px, var(--grid-color) 1px, transparent 0);
+        background-size: 32px 32px;
+      }
+
+      h1, h2, h3, .font-rajdhani {
+        font-family: 'Rajdhani', sans-serif;
+      }
+
+      /* Professional Split-Flap Clock Styles */
+      .perspective {
+        perspective: 1200px;
+      }
+      .preserve-3d {
+        transform-style: preserve-3d;
+      }
+      
+      .flip-card-unit {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        background-color: #0c0e1a;
+        border-radius: 4px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (min-width: 640px) {
+        .flip-card-unit { height: 100px; border-radius: 6px; }
+      }
+
+      .flip-section {
+        position: absolute;
+        width: 100%;
+        height: 50%;
+        overflow: hidden;
+        background-color: #121421;
+        left: 0;
+        z-index: 1;
+      }
+
+      .flip-section.top {
+        top: 0;
+        border-radius: 4px 4px 0 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+      }
+
+      .flip-section.bottom {
+        bottom: 0;
+        border-radius: 0 0 4px 4px;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .digit-container {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 200%; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 800;
+        font-family: 'Rajdhani', sans-serif;
+        color: var(--accent);
+        text-shadow: 0 0 15px var(--accent-glow);
+      }
+
+      .top .digit-container { top: 0; }
+      .bottom .digit-container { bottom: 0; }
+
+      .flip-leaf {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        z-index: 10;
+        transform-origin: bottom;
+        pointer-events: none;
+      }
+
+      .flip-leaf.animate {
+        animation: flip-down 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes flip-down {
+        0% { transform: rotateX(0deg); }
+        100% { transform: rotateX(-180deg); }
+      }
+
+      .leaf-side {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        overflow: hidden;
+        background-color: #121421;
+      }
+
+      .leaf-front {
+        z-index: 2;
+        border-radius: 4px 4px 0 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+      }
+
+      .leaf-back {
+        transform: rotateX(180deg);
+        border-radius: 0 0 4px 4px;
+      }
+
+      .leaf-front .digit-container { top: 0; }
+      .leaf-back .digit-container { bottom: 0; }
+
+      .hinge-line {
+        position: absolute;
+        top: calc(50% - 1px);
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #000;
+        z-index: 50;
+      }
+
+      /* HUD Card Styles */
+      .hud-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(128, 128, 128, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+      }
+      
+      .hud-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        border-top: 2px solid var(--accent);
+        border-left: 2px solid var(--accent);
+      }
+      
+      .hud-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        border-bottom: 2px solid var(--accent);
+        border-right: 2px solid var(--accent);
+      }
+
+      .hud-card:hover {
+        border-color: rgba(244, 63, 94, 0.3);
+        box-shadow: 0 0 40px -10px rgba(244, 63, 94, 0.15);
+      }
+
+      .hud-card .card-content {
+        position: relative;
+        z-index: 5;
+      }
+
+      /* Button filling effect */
+      .btn-tactical {
+        position: relative;
+        overflow: hidden;
+        background: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        transition: all 0.3s ease;
+      }
+      
+      .dark .btn-tactical {
+        color: white;
+      }
+      
+      .btn-tactical::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--accent);
+        transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        z-index: -1;
+      }
+      
+      .btn-tactical:hover {
+        color: white;
+      }
+      
+      .btn-tactical:hover::before {
+        left: 0;
+      }
+
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      ::selection {
+        background: var(--accent);
+        color: white;
+      }
+
+      /* AdSense Specific Logic */
+      .ad-container:not(:has(ins:not(:empty))) {
+        display: none !important;
+      }
+      ins.adsbygoogle[data-ad-status="unfilled"],
+      ins.adsbygoogle:empty {
+        display: none !important;
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
+  }
+}
+</script>
+  </head>
+  <body class="bg-grid">
+    <div id="root"></div>
+  </body>
+</html>

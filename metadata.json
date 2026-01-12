@@ -1,0 +1,5 @@
+{
+  "name": "BattleClock: Tactical Match Sync",
+  "description": "A high-performance tactical esports countdown platform for tracking BGMI and PUBG tournaments with real-time split-flap synchronization.",
+  "requestFramePermissions": []
+}
